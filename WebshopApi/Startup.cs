@@ -29,6 +29,14 @@ namespace WebshopApi
         {
             services.AddDbContext<WebshopContext>(opt => opt.UseSqlServer(@"Data Source=(localdb)\mssqllocaldb;Initial Catalog=Webshop;Integrated Security=True"));
             services.AddControllers();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .WithOrigins("http://localhost:3000")
+                        .AllowCredentials());
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -42,6 +50,8 @@ namespace WebshopApi
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors("CorsPolicy");
 
             app.UseAuthorization();
 

@@ -15,5 +15,7 @@ namespace WebshopApi.Models
 
         public DbSet<Products> Products { get; set; }
         public DbSet<Manufacturers> Manufacturers { get; set; }
+        public DbSet<Carts> Carts { get; set; }
+        public DbSet<OrderItems> OrderItems { get; set; }
     }
 }
