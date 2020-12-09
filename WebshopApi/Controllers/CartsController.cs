@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 using WebshopApi.Models;
+using WebshopApi.DTOs;
 
 namespace WebshopApi.Controllers
 {
@@ -38,7 +39,6 @@ namespace WebshopApi.Controllers
             return carts;
         }
         // GET: api/Carts/5
-        //csúnya/össze-vissza van írva, javítani kell
         [HttpGet("{id}")]
         public async Task<ActionResult<UserCart>> GetCart(long id)
         {
