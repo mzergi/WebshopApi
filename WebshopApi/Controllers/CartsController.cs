@@ -29,12 +29,20 @@ namespace WebshopApi.Controllers
             return carts;
 
         }
+        //api/carts/firstcart
+        [HttpGet ("firstcart")]
+        public async Task<ActionResult<Carts>> GetFirstCart()
+        {
+            var carts = await _context.Carts.FirstAsync();
+
+            return carts;
+        }
         // GET: api/Carts/5
         //csúnya/össze-vissza van írva, javítani kell
         [HttpGet("{id}")]
         public async Task<ActionResult<UserCart>> GetCart(long id)
         {
-            var cartRecord = await _context.Carts.FindAsync(id);
+            var cartRecord = await _context.Carts.FindAsync(id).ConfigureAwait(false);
 
             if (cartRecord == null)
             {
@@ -49,9 +57,10 @@ namespace WebshopApi.Controllers
 
             var products = await query.ToListAsync().ConfigureAwait(false);
 
-            var orderitems = from oi in _context.OrderItems
+            var orderitemsquery = from oi in _context.OrderItems
                              where oi.CartID == cartRecord.ID
                              select oi;
+            var orderitems = await orderitemsquery.ToListAsync().ConfigureAwait(false);
 
             var cartitems = products.Join(orderitems, p => p.ID, oi => oi.ProductID, (p, v) => new CartItem(p, v.Pieces)).ToList();
 
@@ -84,14 +93,10 @@ namespace WebshopApi.Controllers
             long id = data.id;
             long productid = data.productid;
             long pieces = data.pieces;
-            var query =
-                from c in _context.Carts
-                where c.ID == id
-                select c;
 
-            var cart = await query.ToListAsync().ConfigureAwait(false);
+            var cart = await _context.Carts.FindAsync(id).ConfigureAwait(false);
 
-            if (cart.Count == 0)
+            if (cart == null)
             {
                 return NotFound();
             }
@@ -100,18 +105,19 @@ namespace WebshopApi.Controllers
                             where (oi.CartID == id && oi.ProductID == productid)
                             select oi;
 
-            var orderitem = await orderitemquery.ToListAsync().ConfigureAwait(false);
-            if (orderitem.Count == 0)
+            var orderitem = await orderitemquery.FirstOrDefaultAsync().ConfigureAwait(false);
+
+            if (orderitem == null)
             {
                 _context.OrderItems.Add(new OrderItems { CartID = id, Pieces = pieces, ProductID = productid });
                 _context.SaveChanges();
             }
             else
             {
-                orderitem[0].Pieces+=pieces;
-                if(orderitem[0].Pieces == 0)
+                orderitem.Pieces+=pieces;
+                if(orderitem.Pieces == 0)
                 {
-                    _context.OrderItems.Remove(orderitem[0]);
+                    _context.OrderItems.Remove(orderitem);
                 }
                 _context.SaveChanges();
             }
