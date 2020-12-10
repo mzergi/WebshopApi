@@ -81,14 +81,9 @@ namespace WebshopApi.Controllers
 
             return usercart;
         }
-        public class PostCartItemArgs
-        {
-            public long id { get; set; }
-            public long productid { get; set; }
-            public long pieces { get; set; }
-        }
+
         [HttpPost]
-        public async Task<IActionResult> PostCartItem(PostCartItemArgs data)
+        public async Task<IActionResult> PostCartItem([FromBody] PostCartItemArgs data)
         {
             long id = data.id;
             long productid = data.productid;
