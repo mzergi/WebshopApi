@@ -105,7 +105,7 @@ namespace WebshopApi.Controllers
             if (orderitem == null)
             {
                 _context.OrderItems.Add(new OrderItems { CartID = id, Pieces = pieces, ProductID = productid });
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
             else
             {
@@ -114,7 +114,7 @@ namespace WebshopApi.Controllers
                 {
                     _context.OrderItems.Remove(orderitem);
                 }
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
 
             return NoContent();
